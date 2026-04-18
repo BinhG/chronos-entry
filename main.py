@@ -93,6 +93,17 @@ async def _periodic_forecast():
 # ---------------------------------------------------------------------------
 # Endpoints
 # ---------------------------------------------------------------------------
+@app.get("/")
+def root():
+    return {
+        "service": "Chronos Forecaster",
+        "status": "online",
+        "model": MODEL_ID,
+        "target": TARGET_SYMBOL,
+        "endpoints": ["/health", "/forecast", "/forecast?symbol=GC=F", "/chart"],
+    }
+
+
 @app.get("/health")
 def health():
     return {
