@@ -43,8 +43,8 @@ class ChronosEngine:
         if len(values) < 10:
             raise ValueError(f"Not enough data points ({len(values)}). Need >= 10.")
 
-        context_tensor = torch.tensor(values).unsqueeze(0)  # shape [1, T]
-
+        # Chronos 2.0 requires shape [n_series, n_variates, history_length]
+        context_tensor = torch.tensor(values).unsqueeze(0).unsqueeze(0)  # shape [1, 1, T]
         print(f"[Chronos] Generating forecast for {prediction_length} steps "
               f"from {len(values)} context points...")
 
