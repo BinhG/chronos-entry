@@ -58,24 +58,25 @@ class ChronosEngine:
 
         if self._use_df_api:
             # --- Chronos-2 DataFrame API ---
-            # Chronos-2 requires a uniform DatetimeIndex — resample to fill gaps
+            # Chronos-2 requires a uniform, gapless DatetimeIndex
             ts = context_df.set_index("timestamp")["target"].dropna()
             ts.index = pd.to_datetime(ts.index)
             ts = ts.sort_index()
 
-            # Detect dominant freq (most common interval), then resample
+            # Detect dominant freq (most common interval), then resample to fill gaps
             diffs = ts.index.to_series().diff().dropna()
             dominant = diffs.mode()[0]
-            # Map to pandas offset alias
             minutes = int(dominant.total_seconds() // 60)
             freq_alias = {60: "h", 240: "4h", 1440: "D"}.get(minutes, f"{minutes}min")
 
+            # Resample & forward-fill gaps — this also sets index.freq
             ts = ts.resample(freq_alias).last().ffill()
 
             ctx = ts.reset_index()
             ctx.columns = ["timestamp", "target"]
             ctx["id"] = "series_0"
 
+            # NOTE: do NOT pass freq= kwarg — Chronos-2 infers it from the index
             pred_df = self.pipeline.predict_df(
                 ctx,
                 prediction_length=prediction_length,
@@ -83,7 +84,6 @@ class ChronosEngine:
                 id_column="id",
                 timestamp_column="timestamp",
                 target="target",
-                freq=freq_alias,
             )
 
             q10 = pred_df["0.1"].values
