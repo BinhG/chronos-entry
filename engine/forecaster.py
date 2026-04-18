@@ -21,7 +21,7 @@ class ChronosEngine:
             self.pipeline = Chronos2Pipeline.from_pretrained(
                 model_id,
                 device_map="cpu",
-                torch_dtype=torch.float32,
+                dtype=torch.float32,
             )
             self._use_df_api = True          # predict_df()
             print("[Chronos] Loaded via Chronos2Pipeline (predict_df API)")
@@ -30,7 +30,7 @@ class ChronosEngine:
             self.pipeline = BaseChronosPipeline.from_pretrained(
                 model_id,
                 device_map="cpu",
-                torch_dtype=torch.float32,
+                dtype=torch.float32,
             )
             self._use_df_api = False         # predict() tensor API
             print("[Chronos] Loaded via BaseChronosPipeline (tensor API)")
