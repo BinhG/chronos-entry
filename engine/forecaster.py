@@ -52,7 +52,6 @@ class ChronosEngine:
         forecast = self.pipeline.predict(
             context_tensor,
             prediction_length=prediction_length,
-            num_samples=50,
         )
 
         forecast_np = forecast.numpy()[0]  # [num_samples, prediction_length]
